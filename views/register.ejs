@@ -1,0 +1,73 @@
+<%- include("partials/head", { title, bodyClass }) %>
+<%- include("partials/nav") %>
+
+<main class="auth-shell">
+  <section class="hero-panel">
+    <p class="eyebrow">Student Onboarding</p>
+    <h1>Register once. Access everything after.</h1>
+    <p class="hero-copy">
+      Create your student account to build your academic profile, track fees, enroll in courses, and monitor
+      performance throughout the semester.
+    </p>
+  </section>
+
+  <section class="auth-card">
+    <div class="card-heading">
+      <p class="eyebrow">Registration</p>
+      <h2>Create your student profile</h2>
+      <p>This creates a student login and profile record in one step.</p>
+    </div>
+
+    <%- include("partials/flash") %>
+
+    <form class="stack-form" action="/register" method="post">
+      <div class="form-grid">
+        <label>
+          <span>Full name</span>
+          <input type="text" name="name" required />
+        </label>
+        <label>
+          <span>Registration number</span>
+          <input type="text" name="rollNumber" required />
+        </label>
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" required />
+        </label>
+        <label>
+          <span>Password</span>
+          <input type="password" name="password" required />
+        </label>
+        <label>
+          <span>Department</span>
+          <input type="text" name="department" placeholder="Computer Science" />
+        </label>
+        <label>
+          <span>Year</span>
+          <select name="year">
+            <option value="1">Year 1</option>
+            <option value="2">Year 2</option>
+            <option value="3">Year 3</option>
+            <option value="4">Year 4</option>
+          </select>
+        </label>
+        <label>
+          <span>Phone</span>
+          <input type="text" name="phone" placeholder="+91 ..." />
+        </label>
+        <label>
+          <span>Guardian name</span>
+          <input type="text" name="guardianName" />
+        </label>
+      </div>
+      <button class="button-primary" type="submit">Create Student Account</button>
+    </form>
+
+    <p class="muted-copy">
+      Already have an account? <a href="/login">Return to login</a>.
+    </p>
+  </section>
+</main>
+
+</body>
+</html>

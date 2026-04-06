@@ -1,0 +1,23 @@
+{
+  "name": "student-management-portal",
+  "version": "1.0.0",
+  "description": "Clean university student management portal built with Node.js and Express.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "seed": "node data/seed.js"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "student-management",
+    "university"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1"
+  }
+}

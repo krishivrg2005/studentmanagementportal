@@ -1,0 +1,211 @@
+<%- include("partials/head", { title, bodyClass }) %>
+<%- include("partials/nav") %>
+
+<main class="dashboard-shell">
+  <section class="dashboard-hero">
+    <div>
+      <p class="eyebrow">Admin Console</p>
+      <h1>University operations at a glance.</h1>
+      <p class="hero-copy">
+        Control academic records, configure courses, onboard faculty, and keep fee ledgers current from one
+        executive view.
+      </p>
+    </div>
+    <div class="hero-badge">
+      <span>Logged in as</span>
+      <strong><%= currentUser.name %></strong>
+      <small>Administrator</small>
+    </div>
+  </section>
+
+  <%- include("partials/flash") %>
+
+  <section class="stats-grid">
+    <% stats.forEach((stat) => { %>
+      <article class="stat-card tone-<%= stat.tone %>">
+        <p><%= stat.label %></p>
+        <h2><%= stat.value %></h2>
+      </article>
+    <% }) %>
+  </section>
+
+  <section class="content-grid">
+    <article class="panel">
+      <div class="panel-heading">
+        <p class="eyebrow">Faculty Management</p>
+        <h2>Add faculty access</h2>
+      </div>
+      <form class="stack-form" action="/admin/faculty/create" method="post">
+        <div class="form-grid">
+          <label><span>Name</span><input name="name" required /></label>
+          <label><span>Email</span><input type="email" name="email" required /></label>
+          <label><span>Password</span><input type="text" name="password" placeholder="Temporary password" required /></label>
+          <label><span>Employee ID</span><input name="employeeId" /></label>
+          <label><span>Department</span><input name="department" /></label>
+          <label><span>Title</span><input name="title" placeholder="Assistant Professor" /></label>
+        </div>
+        <button class="button-primary" type="submit">Create Faculty Account</button>
+      </form>
+    </article>
+
+    <article class="panel">
+      <div class="panel-heading">
+        <p class="eyebrow">Course Catalog</p>
+        <h2>Publish a new course</h2>
+      </div>
+      <form class="stack-form" action="/admin/courses/create" method="post">
+        <div class="form-grid">
+          <label><span>Course code</span><input name="code" required /></label>
+          <label><span>Course title</span><input name="title" required /></label>
+          <label><span>Department</span><input name="department" /></label>
+          <label><span>Semester</span><input name="semester" value="Spring 2026" /></label>
+          <label><span>Credits</span><input type="number" min="1" name="credits" value="3" /></label>
+          <label><span>Capacity</span><input type="number" min="1" name="capacity" value="40" /></label>
+          <label>
+            <span>Assigned faculty</span>
+            <select name="facultyId">
+              <% facultyOptions.forEach((faculty) => { %>
+                <option value="<%= faculty.id %>"><%= faculty.name %> · <%= faculty.department %></option>
+              <% }) %>
+            </select>
+          </label>
+          <label class="full-span"><span>Description</span><textarea name="description" rows="3"></textarea></label>
+        </div>
+        <button class="button-primary" type="submit">Add Course</button>
+      </form>
+    </article>
+  </section>
+
+  <section class="content-grid">
+    <article class="panel">
+      <div class="panel-heading">
+        <p class="eyebrow">Finance Desk</p>
+        <h2>Create fee and payment records</h2>
+      </div>
+      <form class="stack-form" action="/admin/payments/create" method="post">
+        <div class="form-grid">
+          <label>
+            <span>Student</span>
+            <select name="studentId" required>
+              <% students.forEach((student) => { %>
+                <option value="<%= student.id %>"><%= student.name %> · <%= student.rollNumber %></option>
+              <% }) %>
+            </select>
+          </label>
+          <label><span>Term / fee head</span><input name="term" required /></label>
+          <label><span>Amount</span><input type="number" min="0" name="amount" required /></label>
+          <label>
+            <span>Status</span>
+            <select name="status">
+              <option value="Pending">Pending</option>
+              <option value="Paid">Paid</option>
+              <option value="Overdue">Overdue</option>
+            </select>
+          </label>
+          <label><span>Due date</span><input type="date" name="dueDate" required /></label>
+          <label><span>Paid on</span><input type="date" name="paidOn" /></label>
+          <label><span>Method</span>
+            <select name="method">
+              <option value="UPI">UPI</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+          </label>
+          <label><span>Reference</span><input name="reference" /></label>
+        </div>
+        <button class="button-primary" type="submit">Save Fee Record</button>
+      </form>
+    </article>
+
+    <article class="panel">
+      <div class="panel-heading">
+        <p class="eyebrow">Recent Admissions</p>
+        <h2>New student profiles</h2>
+      </div>
+      <div class="mini-list">
+        <% recentStudents.forEach((student) => { %>
+          <div class="mini-list-item">
+            <div>
+              <strong><%= student.name %></strong>
+              <p><%= student.rollNumber %> · <%= student.department %></p>
+            </div>
+            <span><%= student.joinedOn %></span>
+          </div>
+        <% }) %>
+      </div>
+    </article>
+  </section>
+
+  <section class="table-grid">
+    <article class="panel">
+      <div class="panel-heading">
+        <p class="eyebrow">Course Enrollment</p>
+        <h2>Catalog overview</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Course</th>
+              <th>Faculty</th>
+              <th>Semester</th>
+              <th>Seats</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% courses.forEach((course) => { %>
+              <tr>
+                <td>
+                  <strong><%= course.code %></strong>
+                  <span><%= course.title %></span>
+                </td>
+                <td><%= course.facultyName %></td>
+                <td><%= course.semester %></td>
+                <td><%= course.enrolledCount %> / <%= course.capacity %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="panel">
+      <div class="panel-heading">
+        <p class="eyebrow">Fee Ledger</p>
+        <h2>Latest records</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Term</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% payments.forEach((payment) => { %>
+              <tr>
+                <td><%= payment.studentName %></td>
+                <td><%= payment.term %></td>
+                <td><%= payment.amountLabel %></td>
+                <td><span class="status-pill status-<%= payment.status.toLowerCase() %>"><%= payment.status %></span></td>
+                <td>
+                  <form class="inline-form" action="/admin/payments/<%= payment.id %>/status" method="post">
+                    <input type="hidden" name="status" value="Paid" />
+                    <input type="hidden" name="method" value="Admin Clearance" />
+                    <button class="button-secondary" type="submit">Mark Paid</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+</main>
+
+</body>
+</html>

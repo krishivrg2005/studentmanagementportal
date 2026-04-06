@@ -1,0 +1,138 @@
+<%- include("partials/head", { title, bodyClass }) %>
+<%- include("partials/nav") %>
+
+<main class="dashboard-shell">
+  <section class="dashboard-hero">
+    <div>
+      <p class="eyebrow">Attendance Roster</p>
+      <h1><%= course.title %></h1>
+      <p class="hero-copy">
+        Mark each student as present or absent for <%= attendanceDate %> and save the roster in one submission.
+      </p>
+    </div>
+    <div class="hero-badge">
+      <span><%= course.code %></span>
+      <strong><%= faculty.name %></strong>
+      <small><%= course.semester %></small>
+    </div>
+  </section>
+
+  <%- include("partials/flash") %>
+
+  <section class="stats-grid">
+    <article class="stat-card tone-teal">
+      <p>Enrolled Students</p>
+      <h2><%= roster.length %></h2>
+    </article>
+    <article class="stat-card tone-amber">
+      <p>Recorded For Date</p>
+      <h2><%= dailySummary.recordedCount %></h2>
+    </article>
+    <article class="stat-card tone-slate">
+      <p>Present</p>
+      <h2><%= dailySummary.presentCount %></h2>
+    </article>
+    <article class="stat-card tone-rose">
+      <p>Absent</p>
+      <h2><%= dailySummary.absentCount %></h2>
+    </article>
+  </section>
+
+  <section class="panel course-panel">
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow"><%= course.code %></p>
+        <h2>Course attendance roster</h2>
+      </div>
+      <div class="panel-actions">
+        <div class="course-meta">
+          <span><%= course.credits %> credits</span>
+          <span><%= roster.length %> students</span>
+          <span><%= course.department %></span>
+        </div>
+        <a class="button-secondary button-link" href="/faculty/dashboard">Back to Dashboard</a>
+      </div>
+    </div>
+
+    <form class="roster-toolbar" action="/faculty/courses/<%= course.id %>/attendance" method="get">
+      <label class="roster-date-field">
+        <span>Attendance date</span>
+        <input type="date" name="date" value="<%= attendanceDate %>" required />
+      </label>
+      <button class="button-secondary" type="submit">Load This Date</button>
+    </form>
+
+    <form class="roster-form" action="/faculty/courses/<%= course.id %>/attendance" method="post">
+      <input type="hidden" name="date" value="<%= attendanceDate %>" />
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Registration Number</th>
+              <th>Present / Absent</th>
+              <th>Overall Attendance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (!roster.length) { %>
+              <tr>
+                <td colspan="4"><p class="empty-state">No students are enrolled in this course yet.</p></td>
+              </tr>
+            <% } %>
+
+            <% roster.forEach((entry) => { %>
+              <tr>
+                <td>
+                  <strong><%= entry.student?.name || "Student" %></strong>
+                  <span><%= entry.student?.department || "Department not set" %></span>
+                </td>
+                <td>
+                  <strong><%= entry.registrationNumber %></strong>
+                  <span><%= entry.hasRecordedAttendance ? `Saved for ${attendanceDate}` : "No record saved for this date" %></span>
+                </td>
+                <td>
+                  <div class="attendance-toggle" role="radiogroup" aria-label="Attendance status for <%= entry.student?.name || "student" %>">
+                    <label class="toggle-chip is-present">
+                      <input
+                        type="radio"
+                        name="statuses[<%= entry.studentId %>]"
+                        value="Present"
+                        <%= entry.selectedStatus === "Present" ? "checked" : "" %>
+                      />
+                      <span>Present</span>
+                    </label>
+                    <label class="toggle-chip is-absent">
+                      <input
+                        type="radio"
+                        name="statuses[<%= entry.studentId %>]"
+                        value="Absent"
+                        <%= entry.selectedStatus === "Absent" ? "checked" : "" %>
+                      />
+                      <span>Absent</span>
+                    </label>
+                  </div>
+                </td>
+                <td>
+                  <strong><%= entry.attendanceRate %>%</strong>
+                  <span><%= entry.latestAttendance ? `${entry.latestAttendance.status} on ${entry.latestAttendance.date}` : "No previous records" %></span>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <% if (roster.length) { %>
+        <div class="roster-actions">
+          <p class="muted-copy">Use the toggle in each row to mark students present or absent, then save the roster.</p>
+          <button class="button-primary" type="submit">Save Attendance Roster</button>
+        </div>
+      <% } %>
+    </form>
+  </section>
+</main>
+
+</body>
+</html>

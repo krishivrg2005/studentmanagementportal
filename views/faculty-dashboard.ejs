@@ -1,0 +1,127 @@
+<%- include("partials/head", { title, bodyClass }) %>
+<%- include("partials/nav") %>
+
+<main class="dashboard-shell">
+  <section class="dashboard-hero">
+    <div>
+      <p class="eyebrow">Faculty Workspace</p>
+      <h1>Attendance and assessment, streamlined.</h1>
+      <p class="hero-copy">
+        Track daily class presence, update marks, and stay on top of learner progress across each assigned course.
+      </p>
+    </div>
+    <div class="hero-badge">
+      <span><%= faculty.title %></span>
+      <strong><%= faculty.name %></strong>
+      <small><%= faculty.department %></small>
+    </div>
+  </section>
+
+  <%- include("partials/flash") %>
+
+  <section class="stats-grid">
+    <% stats.forEach((stat) => { %>
+      <article class="stat-card tone-<%= stat.tone %>">
+        <p><%= stat.label %></p>
+        <h2><%= stat.value %></h2>
+      </article>
+    <% }) %>
+  </section>
+
+  <section class="content-grid">
+    <article class="panel">
+      <div class="panel-heading">
+        <p class="eyebrow">Recent Grade Updates</p>
+        <h2>Assessment activity</h2>
+      </div>
+      <div class="mini-list">
+        <% if (!recentGrades.length) { %>
+          <p class="empty-state">No grades recorded yet.</p>
+        <% } %>
+        <% recentGrades.forEach((grade) => { %>
+          <div class="mini-list-item">
+            <div>
+              <strong><%= grade.courseCode %> · <%= grade.assessment %></strong>
+              <p><%= grade.studentName %></p>
+            </div>
+            <span><%= grade.marks %> (<%= grade.gradeLetter %>)</span>
+          </div>
+        <% }) %>
+      </div>
+    </article>
+  </section>
+
+  <% courseBundles.forEach((course) => { %>
+    <section class="panel course-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow"><%= course.code %></p>
+          <h2><%= course.title %></h2>
+        </div>
+        <div class="panel-actions">
+          <div class="course-meta">
+            <span><%= course.credits %> credits</span>
+            <span><%= course.students.length %> students</span>
+            <span><%= course.semester %></span>
+          </div>
+          <a class="button-secondary button-link" href="/faculty/courses/<%= course.id %>/attendance?date=<%= today %>">
+            Open Attendance Roster
+          </a>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Registration Number</th>
+              <th>Attendance</th>
+              <th>Latest Grade</th>
+              <th>Update Marks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (!course.students.length) { %>
+              <tr>
+                <td colspan="5"><p class="empty-state">No students enrolled yet.</p></td>
+              </tr>
+            <% } %>
+            <% course.students.forEach((entry) => { %>
+              <tr>
+                <td>
+                  <strong><%= entry.student?.name || "Student" %></strong>
+                  <span><%= entry.student?.department || "Department not set" %></span>
+                </td>
+                <td>
+                  <strong><%= entry.student?.rollNumber || "Not assigned" %></strong>
+                  <span><%= entry.student?.year ? `Year ${entry.student.year}` : "Year not set" %></span>
+                </td>
+                <td>
+                  <strong><%= entry.attendanceRate %>%</strong>
+                  <span><%= entry.latestAttendance ? `${entry.latestAttendance.status} on ${entry.latestAttendance.date}` : "No records yet" %></span>
+                </td>
+                <td>
+                  <strong><%= entry.latestGrade ? `${entry.latestGrade.marks} (${entry.latestGrade.gradeLetter})` : "No grades yet" %></strong>
+                  <span><%= entry.latestGrade?.assessment || "Waiting for assessment" %></span>
+                </td>
+                <td>
+                  <form class="compact-form" action="/faculty/grades" method="post">
+                    <input type="hidden" name="courseId" value="<%= course.id %>" />
+                    <input type="hidden" name="studentId" value="<%= entry.student?.id %>" />
+                    <input type="text" name="assessment" placeholder="Assessment" required />
+                    <input type="number" name="marks" min="0" max="100" placeholder="Marks" required />
+                    <button class="button-secondary" type="submit">Save</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  <% }) %>
+</main>
+
+</body>
+</html>

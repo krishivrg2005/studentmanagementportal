@@ -1,0 +1,66 @@
+<%- include("partials/head", { title, bodyClass }) %>
+<%- include("partials/nav") %>
+
+<main class="auth-shell">
+  <section class="hero-panel">
+    <p class="eyebrow">Digital Campus Operations</p>
+    <h1>Clean, role-based control for academic life.</h1>
+    <p class="hero-copy">
+      Manage student records, course enrollment, attendance, grades, and fee workflows from one polished
+      university portal.
+    </p>
+
+    <div class="credential-list">
+      <div class="credential-card">
+        <div>
+          <h3>Admin Demo</h3>
+          <p><strong>Email:</strong> admin@studentportal.edu</p>
+          <p><strong>Password:</strong> Admin@123</p>
+        </div>
+      </div>
+      <div class="credential-card">
+        <div>
+          <h3>Faculty Demo</h3>
+          <p><strong>Email:</strong> faculty@studentportal.edu</p>
+          <p><strong>Password:</strong> Faculty@123</p>
+        </div>
+      </div>
+      <div class="credential-card">
+        <div>
+          <h3>Student Demo</h3>
+          <p><strong>Email:</strong> student@studentportal.edu</p>
+          <p><strong>Password:</strong> Student@123</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="auth-card">
+    <div class="card-heading">
+      <p class="eyebrow">Secure Access</p>
+      <h2>Sign in to your dashboard</h2>
+      <p>Choose your role account and continue into the portal.</p>
+    </div>
+
+    <%- include("partials/flash") %>
+
+    <form class="stack-form" action="/login" method="post">
+      <label>
+        <span>Email</span>
+        <input type="email" name="email" placeholder="name@studentportal.edu" required />
+      </label>
+      <label>
+        <span>Password</span>
+        <input type="password" name="password" placeholder="Enter your password" required />
+      </label>
+      <button class="button-primary" type="submit">Login</button>
+    </form>
+
+    <p class="muted-copy">
+      New student? <a href="/register">Create a registration profile</a>.
+    </p>
+  </section>
+</main>
+
+</body>
+</html>
